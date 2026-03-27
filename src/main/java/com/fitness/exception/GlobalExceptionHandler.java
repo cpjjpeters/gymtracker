@@ -1,3 +1,4 @@
+
 package com.fitness.exception;
 
 import jakarta.persistence.EntityNotFoundException;

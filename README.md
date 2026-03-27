@@ -10,21 +10,23 @@ A Spring Boot REST API for tracking gym exercises, workouts, and progress. Track
 - **Basic Exercise Dataset**: Pre-loaded with 50+ common gym exercises
 - **Validation**: Input validation with detailed error messages
 - **Error Handling**: Global exception handling for consistent API responses
+- **CORS Support**: Cross-origin requests enabled for frontend integration
 
 ## Tech Stack
 
-- Java 17
-- Spring Boot 3.2.0
+- Java 21
+- Spring Boot 3.4.12
 - Spring Data JPA
 - H2 Database (in-memory)
 - Maven
 - Lombok
+- Jakarta Validation
 
 ## Getting Started
 
 ### Prerequisites
 
-- Java 17 or higher
+- Java 21 or higher
 - Maven 3.6+
 
 ### Running the Application
@@ -32,7 +34,7 @@ A Spring Boot REST API for tracking gym exercises, workouts, and progress. Track
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd fitness-tracker
+cd gymtracker
 ```
 
 2. Build the project:
@@ -306,7 +308,7 @@ GET /api/entries/exercise/{exerciseId}/count
 ### WorkoutEntry
 - `id`: Long (auto-generated)
 - `workout`: Workout (required)
-- `exercise`: Exercise (required)
+- `exercise`: Exercise (required, eager fetch)
 - `setNumber`: Integer (required, min 1)
 - `repetitions`: Integer (required, min 0)
 - `weight`: BigDecimal (min 0)
@@ -398,9 +400,42 @@ The API returns consistent error responses:
 
 ## CORS
 
-The API supports CORS and allows requests from any origin.
+The API supports CORS and allows requests from any origin (`@CrossOrigin(origins = "*")`).
+
+## Project Structure
+
+```
+gymtracker/
+├── pom.xml
+├── README.md
+└── src/
+    └── main/
+        ├── java/com/fitness/
+        │   ├── FitnessTrackerApplication.java
+        │   ├── config/
+        │   │   └── DataInitializer.java
+        │   ├── controller/
+        │   │   ├── ExerciseController.java
+        │   │   ├── WorkoutController.java
+        │   │   └── WorkoutEntryController.java
+        │   ├── exception/
+        │   │   └── GlobalExceptionHandler.java
+        │   ├── model/
+        │   │   ├── Exercise.java
+        │   │   ├── Workout.java
+        │   │   └── WorkoutEntry.java
+        │   ├── repository/
+        │   │   ├── ExerciseRepository.java
+        │   │   ├── WorkoutRepository.java
+        │   │   └── WorkoutEntryRepository.java
+        │   └── service/
+        │       ├── ExerciseService.java
+        │       ├── WorkoutService.java
+        │       └── WorkoutEntryService.java
+        └── resources/
+            └── application.properties
+```
 
 ## License
 
 This project is open source and available under the MIT License.
-# gymtracker
