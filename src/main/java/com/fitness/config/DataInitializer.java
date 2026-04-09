@@ -3,14 +3,22 @@ package com.fitness.config;
 import com.fitness.model.Exercise;
 import com.fitness.model.Exercise.ExerciseType;
 import com.fitness.model.Exercise.MuscleGroup;
+import com.fitness.model.Workout;
+import com.fitness.model.WorkoutEntry;
+import com.fitness.model.WorkoutEntry.GripType;
 import com.fitness.repository.ExerciseRepository;
+import com.fitness.repository.WorkoutEntryRepository;
+import com.fitness.repository.WorkoutRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -18,6 +26,8 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final ExerciseRepository exerciseRepository;
+    private final WorkoutRepository workoutRepository;
+    private final WorkoutEntryRepository workoutEntryRepository;
 
     @Override
     public void run(String... args) {
@@ -27,6 +37,38 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Basic exercise dataset initialized successfully!");
         } else {
             log.info("Exercise dataset already exists, skipping initialization.");
+        }
+
+        if (workoutRepository.count() == 0) {
+            log.info("Initializing sample workout and workout entry...");
+            initializeWorkouts();
+            log.info("Sample workout and workout entry initialized successfully!");
+        } else {
+            log.info("Workouts already exist, skipping initialization.");
+        }
+    }
+
+    private void initializeWorkouts() {
+        Optional<Exercise> benchPress = exerciseRepository.findByName("Bench Press");
+
+        if (benchPress.isPresent()) {
+            Workout workout = new Workout();
+            workout.setDate(LocalDate.now());
+            workout.setNotes("First sample workout");
+            workout.setDurationMinutes(60);
+            Workout savedWorkout = workoutRepository.save(workout);
+
+            WorkoutEntry entry = new WorkoutEntry();
+            entry.setWorkout(savedWorkout);
+            entry.setExercise(benchPress.get());
+            entry.setSetNumber(1);
+            entry.setRepetitions(10);
+            entry.setWeight(new BigDecimal("60.00"));
+            entry.setGrip(GripType.OVERHAND);
+            entry.setNotes("First sample entry");
+            workoutEntryRepository.save(entry);
+        } else {
+            log.warn("Exercise 'Bench Press' not found, skipping workout initialization.");
         }
     }
 

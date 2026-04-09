@@ -1,5 +1,6 @@
 package com.fitness.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,6 +36,7 @@ public class Workout {
     private Integer durationMinutes;
 
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("workout")
     private List<WorkoutEntry> entries = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
